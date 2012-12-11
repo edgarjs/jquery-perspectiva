@@ -2,7 +2,7 @@
 
 Create easy parallax (3D) effects with jQuery.
 
-This plugin is inspired by (stephband's jparallax)[https://github.com/stephband/jparallax]. However I tried to make an easier to use/modify plugin.
+This plugin is inspired by [stephband's jparallax](https://github.com/stephband/jparallax). However I tried to make an easier to use/modify plugin.
 
 ## Usage
 
