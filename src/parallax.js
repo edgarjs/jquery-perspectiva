@@ -133,7 +133,9 @@
                     _this._onLayerReady();
                 });
                 this.layers.push(layer);
-                this[layer.name] = layer;
+                if (layer.name) {
+                    this[layer.name] = layer;
+                }
 
                 layer.render(this.element);
             }
@@ -172,7 +174,7 @@
             if (options === 'destroy') {
                 this.parallax.destroy();
             } else if (options === 'update') {
-                this.parallax[layer].update(attributes);
+                this.parallax[layer] && this.parallax[layer].update(attributes);
             } else {
                 this.parallax = new Viewport($(this), options);
             }
