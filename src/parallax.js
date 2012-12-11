@@ -7,17 +7,21 @@
     Layer.prototype = {
         init: function (attributes) {
             var options = $.extend(true, {
-                xAxis: true,
-                yAxis: true,
-                xSpeed: 0.2,
-                ySpeed: 0.2,
-                xRange: [0, 1],
-                yRange: [0, 1]
-            }, attributes);
+                    xAxis: true,
+                    yAxis: true,
+                    xSpeed: 0.2,
+                    scale: 0,
+                    ySpeed: 0.2,
+                    xRange: [0, 1],
+                    yRange: [0, 1]
+                }, attributes);
 
-            $.extend(this, options);
+            $.extend(true, this, options);
 
             this.element = $('<img />').attr('src', this.src);
+            if (this.scale) {
+                this.element.height((this.scale * 100) + '%');
+            }
             this.element.load(function () {
                 $(this).trigger('ready.parallax');
             });
@@ -36,11 +40,11 @@
         move: function (position) {
             var css = {}, maxLeftPerc, maxTopPerc,
                 maxLeftRange, maxTopRange,
-                maxLeftPx = Math.abs(this.element.width() - this.viewport.width),
-                maxTopPx = Math.abs(this.element.height() - this.viewport.height);
+                maxLeftPx = Math.abs(this.element.width() - this.viewport.width()),
+                maxTopPx = Math.abs(this.element.height() - this.viewport.height());
             if (this.xAxis) {
                 css.marginLeft = (position.x * 100 * this.xSpeed);
-                maxLeftPerc = maxLeftPx * 100 / this.viewport.width;
+                maxLeftPerc = maxLeftPx * 100 / this.viewport.width();
                 maxLeftRange = ((this.xRange[1] - this.xRange[0]) * 100);
                 if (Math.abs(css.marginLeft) <= maxLeftPerc &&
                     maxLeftRange >= css.marginLeft) {
@@ -51,7 +55,7 @@
             }
             if (this.yAxis) {
                 css.marginTop = (position.y * 100 * this.ySpeed);
-                maxTopPerc = maxTopPx * 100 / this.viewport.height;
+                maxTopPerc = maxTopPx * 100 / this.viewport.height();
                 maxTopRange = ((this.yRange[1] - this.yRange[0]) * 100);
                 if (Math.abs(css.marginTop) <= maxTopPerc) {
                     css.marginTop += '%';
@@ -78,8 +82,6 @@
             this.options = $.extend({}, options);
             this.element = element;
             this.layers = [];
-            this.width = this.element.width();
-            this.height = this.element.height();
             this.layersReady = 0;
             this.initLayers();
         },
@@ -98,6 +100,14 @@
                 });
                 this.options.ready && this.options.ready();
             }
+        },
+
+        width: function () {
+            return this.element.width();
+        },
+
+        height: function () {
+            return this.element.height();
         },
 
         initLayers: function () {
@@ -122,8 +132,8 @@
                 layersLength = this.layers.length;
 
             newPos = {
-                x: (position.x / this.width),
-                y: (position.y / this.height)
+                x: (position.x / this.width()),
+                y: (position.y / this.height())
             };
 
             for (i = 0; i < layersLength; i++) {
