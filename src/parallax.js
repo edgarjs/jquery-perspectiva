@@ -6,6 +6,14 @@
 
     Layer.prototype = {
         init: function (attributes) {
+            this.update(attributes);
+            
+            this.element.load(function () {
+                $(this).trigger('ready.parallax');
+            });
+        },
+
+        update: function (attributes) {
             var options = $.extend(true, {
                     xAxis: true,
                     yAxis: true,
@@ -18,13 +26,16 @@
 
             $.extend(true, this, options);
 
-            this.element = $('<img />').attr('src', this.src);
+            if (!this.element) {
+                this.element = $('<img />');
+            }
+            
+            this.element.attr('src', this.src);
+
             if (this.scale) {
                 this.element.height((this.scale * 100) + '%');
             }
-            this.element.load(function () {
-                $(this).trigger('ready.parallax');
-            });
+
             this.element.css({
                 position: 'absolute',
                 left: (this.xRange[0] * 100) + '%',
@@ -122,6 +133,7 @@
                     _this._onLayerReady();
                 });
                 this.layers.push(layer);
+                this[layer.name] = layer;
 
                 layer.render(this.element);
             }
@@ -155,10 +167,12 @@
         }
     }
 
-    $.fn.parallax = function (options) {
+    $.fn.parallax = function (options, layer, attributes) {
         return $(this).each(function () {
             if (options === 'destroy') {
                 this.parallax.destroy();
+            } else if (options === 'update') {
+                this.parallax[layer].update(attributes);
             } else {
                 this.parallax = new Viewport($(this), options);
             }
