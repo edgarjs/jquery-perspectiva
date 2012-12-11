@@ -7,14 +7,10 @@
     Layer.prototype = {
         init: function (attributes) {
             var options = $.extend(true, {
-                position: {
-                    x: 0,
-                    y: 0
-                },
                 xAxis: true,
                 yAxis: true,
-                xSpeed: 0,
-                ySpeed: 0,
+                xSpeed: 0.2,
+                ySpeed: 0.2,
                 xRange: [0, 1],
                 yRange: [0, 1]
             }, attributes);
@@ -27,8 +23,8 @@
             });
             this.element.css({
                 position: 'absolute',
-                top: (this.position.y * 100) + '%',
-                left: (this.position.x * 100) + '%'
+                left: (this.xRange[0] * 100) + '%',
+                top: (this.yRange[0] * 100) + '%'
             });
         },
 
@@ -39,12 +35,15 @@
 
         move: function (position) {
             var css = {}, maxLeftPerc, maxTopPerc,
+                maxLeftRange, maxTopRange,
                 maxLeftPx = Math.abs(this.element.width() - this.viewport.width),
                 maxTopPx = Math.abs(this.element.height() - this.viewport.height);
             if (this.xAxis) {
                 css.marginLeft = (position.x * 100 * this.xSpeed);
                 maxLeftPerc = maxLeftPx * 100 / this.viewport.width;
-                if (Math.abs(css.marginLeft) <= maxLeftPerc) {
+                maxLeftRange = ((this.xRange[1] - this.xRange[0]) * 100);
+                if (Math.abs(css.marginLeft) <= maxLeftPerc &&
+                    maxLeftRange >= css.marginLeft) {
                     css.marginLeft += '%';
                 } else {
                     delete css.marginLeft;
@@ -53,6 +52,7 @@
             if (this.yAxis) {
                 css.marginTop = (position.y * 100 * this.ySpeed);
                 maxTopPerc = maxTopPx * 100 / this.viewport.height;
+                maxTopRange = ((this.yRange[1] - this.yRange[0]) * 100);
                 if (Math.abs(css.marginTop) <= maxTopPerc) {
                     css.marginTop += '%';
                 } else {
