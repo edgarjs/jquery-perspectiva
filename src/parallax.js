@@ -60,6 +60,11 @@
                 }
             }
             this.element.css(css);
+        },
+
+        destroy: function () {
+            this.element.remove();
+            this.viewport = null;
         }
     };
 
@@ -103,6 +108,7 @@
                 this.options.layers[i].viewport = this;
                 layer = new Layer(this.options.layers[i]);
                 layer.element.bind('ready.parallax', function () {
+                    $(this).unbind('ready.parallax');
                     _this._onLayerReady();
                 });
                 this.layers.push(layer);
@@ -126,12 +132,26 @@
             }
 
             return this;
+        },
+
+        destroy: function () {
+            var layersCount = this.layers.length,
+                i;
+
+            this.element.unbind('mousemove.parallax');
+            for (i = 0; i < layersCount; i++) {
+                this.layers[i].destroy();
+            }
         }
     }
 
     $.fn.parallax = function (options) {
         return $(this).each(function () {
-            new Viewport($(this), options);
+            if (options === 'destroy') {
+                this.parallax.destroy();
+            } else {
+                this.parallax = new Viewport($(this), options);
+            }
         });
     };
 })();
