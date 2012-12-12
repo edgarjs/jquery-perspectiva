@@ -7,7 +7,7 @@
     Layer.prototype = {
         init: function (attributes) {
             this.update(attributes);
-            
+
             this.element.load(function () {
                 $(this).trigger('ready.parallax');
             });
@@ -29,7 +29,10 @@
             if (!this.element) {
                 this.element = $('<img />');
             }
-            
+
+            if (typeof this.src === 'function') {
+                this.src = this.src(this);
+            }
             this.element.attr('src', this.src);
 
             if (this.scale) {

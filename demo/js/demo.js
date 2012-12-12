@@ -53,7 +53,10 @@ $(function () {
 
     $('.parallax').parallax({
         layers: [{
-            src: 'img/0_sun.png',
+            src: function (layer) {
+                // You can build any src for the image depending on the layer or viewport settings
+                return 'img/0_sun.png';
+            },
             xSpeed: 0.5,
             ySpeed: 1,
             xRange: [0.2, 1],

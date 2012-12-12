@@ -10,34 +10,37 @@ This plugin is inspired by [stephband's jparallax](https://github.com/stephband/
 $(function () {
     $('.parallax').parallax({
         layers: [{
-            src: 'img/0_sun.png',
-            scale: 0.2,
-            xSpeed: -0.5,
+            src: function (layer) {
+                // You can build any src for the image depending on the layer or viewport settings
+                return 'img/0_sun.png';
+            },
+            xSpeed: 0.5,
             ySpeed: 1,
-            xRange: [0.8],
+            xRange: [0.2, 1],
             yRange: [0, 1],
-            name: 'sun'
+            name: 'sun',
+            scale: 0.5
         }, {
             src: 'img/1_mountains.png',
-            scale: 0.9,
             yAxis: false,
             xSpeed: -0.2,
             ySpeed: 0.2,
+            xRange: [0, -0.06],
             yRange: [0.45],
             name: 'mountains'
         }, {
             src: 'img/2_hill.png',
-            scale: 1.3,
-            xSpeed: -0.5,
+            xSpeed: -1,
             ySpeed: 0.2,
+            xRange: [0, -0.25],
             yRange: [0.41, 1],
             name: 'hill'
         }, {
             src: 'img/3_wood.png',
-            scale: 0.9,
-            xSpeed: -0.8,
+            xSpeed: -1.2,
             ySpeed: 0.3,
-            yRange: [0.4],
+            xRange: [0, -0.55],
+            yRange: [0.5],
             name: 'wood'
         }]
     });
