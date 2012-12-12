@@ -9,8 +9,64 @@
     <script type="text/javascript" src="js/demo.js"></script>
 </head>
 <body>
-    <div class="viewport parallax" id="parallax-1" style="width: 870px;height:490px;"></div>
+    <div class="controls" style="margin: 50px 0; overflow: hidden;">
+        <ul style="float: left; margin-right:50px;">
+            <li><a href="#" class="settings sun">Sun layer settings</a></li>
+            <li><a href="#" class="settings mountains">Mountains layer settings</a></li>
+            <li><a href="#" class="settings hill">Hill layer settings</a></li>
+            <li><a href="#" class="settings wood">Wood layer settings</a></li>
+        </ul>
+        <form action="#" id="settings-form" style="display:none; float:right; margin-right: 50px;">
+            <p>
+                All values must be between <strong>-1 and 1</strong>
+            </p>
+            <p>
+                <label for="name">Name:</label>
+                <input type="text" id="name" readonly>
+            </p>
+            <p>
+                <label for="x-axis">Move in X:</label>
+                <input type="checkbox" id="x-axis" value="1">
+            </p>
+            <p>
+                <label for="y-axis">Move in Y:</label>
+                <input type="checkbox" id="y-axis" value="1">
+            </p>
+            <p>
+                <label for="x-speed">X Speed:</label>
+                <input type="text" id="x-speed">
+            </p>
+            <p>
+                <label for="y-speed">Y Speed:</label>
+                <input type="text" id="y-speed">
+            </p>
+            <p>
+                <label for="x-range-0">X Range:</label>
+                <input type="text" id="x-range-0"> - 
+                <input type="text" id="x-range-1">
+            </p>
+            <p>
+                <label for="y-range-0">Y Range:</label>
+                <input type="text" id="y-range-0">
+                <input type="text" id="y-range-1">
+            </p>
+            <p>
+                <label for="scale">Height scale:</label>
+                <input type="text" id="scale">
+            </p>
+            <p>
+                <input type="submit" value="Update" id="update-settings" disabled>
+            </p>
+        </form>
+    </div>
+    <div class="viewport parallax wide" id="parallax-1" style="width: 870px;height:490px;"></div>
     <div class="viewport parallax" id="parallax-2" style="width: 367px;height:490px;"></div>
-    <div class="viewport parallax-mini" id="parallax-2" style="width: 300px;height:100px;"></div>
+
+    <h3>Mini Parallax, showing scaled layers</h3>
+    <h4>This doesn't get updated with the settings above.</h4>
+    <div class="viewport parallax-mini" id="parallax-3" style="width: 300px;height:100px;"></div>
+
+    <h3>Responsive viewport</h3>
+    <div class="viewport parallax-responsive" id="parallax-4" style="width: 90%;height:60%;margin:0 auto;"></div>
 </body>
 </html>

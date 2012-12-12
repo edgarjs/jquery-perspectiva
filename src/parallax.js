@@ -34,12 +34,16 @@
 
             if (this.scale) {
                 this.element.height((this.scale * 100) + '%');
+            } else {
+                this.element.css('height', '');
             }
 
             this.element.css({
                 position: 'absolute',
                 left: (this.xRange[0] * 100) + '%',
-                top: (this.yRange[0] * 100) + '%'
+                top: (this.yRange[0] * 100) + '%',
+                marginLeft: '',
+                marginTop: ''
             });
         },
 
@@ -49,29 +53,41 @@
         },
 
         move: function (position) {
-            var css = {}, maxLeftPerc, maxTopPerc,
-                maxLeftRange, maxTopRange,
-                maxLeftPx = Math.abs(this.element.width() - this.viewport.width()),
-                maxTopPx = Math.abs(this.element.height() - this.viewport.height());
+            var css = {}, x, realX, maxRangeX, minRangeX, y, realY, maxRangeY, minRangeY;
+
             if (this.xAxis) {
-                css.marginLeft = (position.x * 100 * this.xSpeed);
-                maxLeftPerc = maxLeftPx * 100 / this.viewport.width();
-                maxLeftRange = ((this.xRange[1] - this.xRange[0]) * 100);
-                if (Math.abs(css.marginLeft) <= maxLeftPerc &&
-                    maxLeftRange >= css.marginLeft) {
-                    css.marginLeft += '%';
-                } else {
-                    delete css.marginLeft;
+                x = position.x * this.xSpeed;
+                realX = this.xRange[0] + x;
+                maxRangeX = Math.max.apply(null, this.xRange);
+                minRangeX = Math.min.apply(null, this.xRange);
+
+                xDiff = (this.element.width() - this.viewport.width()) / this.viewport.width();
+
+                if (xDiff > 0) {
+                    minRangeX = Math.max(minRangeX, -xDiff);
+                    maxRangeX = Math.min(maxRangeX, xDiff);
+                }
+
+                if (realX >= minRangeX && realX <= maxRangeX) {
+                    css.marginLeft = (x * 100) + '%';
                 }
             }
             if (this.yAxis) {
-                css.marginTop = (position.y * 100 * this.ySpeed);
-                maxTopPerc = maxTopPx * 100 / this.viewport.height();
-                maxTopRange = ((this.yRange[1] - this.yRange[0]) * 100);
-                if (Math.abs(css.marginTop) <= maxTopPerc) {
-                    css.marginTop += '%';
-                } else {
-                    delete css.marginTop;
+                y = position.y * this.ySpeed;
+                realY = this.yRange[0] + y;
+
+                maxRangeY = Math.max.apply(null, this.yRange);
+                minRangeY = Math.min.apply(null, this.yRange);
+
+                yDiff = (this.element.height() - this.viewport.height()) / this.viewport.height();
+
+                if (yDiff > 0) {
+                    minRangeY = Math.max(minRangeY, -yDiff);
+                    maxRangeY = Math.min(maxRangeY, yDiff);
+                }
+
+                if (realY >= minRangeY && realY <= maxRangeY) {
+                    css.marginTop = (y * 100) + '%';
                 }
             }
             this.element.css(css);
@@ -170,6 +186,9 @@
     }
 
     $.fn.parallax = function (options, layer, attributes) {
+        if (options === 'settings') {
+            return this[0].parallax[layer] && this[0].parallax[layer];
+        }
         return $(this).each(function () {
             if (options === 'destroy') {
                 this.parallax.destroy();
