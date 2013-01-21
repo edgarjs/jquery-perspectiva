@@ -6,10 +6,14 @@
 
     Layer.prototype = {
         init: function (attributes) {
+            var _this = this;
+
             this.update(attributes);
 
             this.element.load(function () {
-                $(this).trigger('ready.parallax');
+                _this.element.unbind('load');
+                _this.setCenter();
+                $(this).trigger('ready.perspectiva');
             });
         },
 
@@ -20,8 +24,8 @@
                     xSpeed: 0.2,
                     scale: 0,
                     ySpeed: 0.2,
-                    xRange: [0, 1],
-                    yRange: [0, 1]
+                    x: 0,
+                    y: 0,
                 }, attributes);
 
             $.extend(true, this, options);
@@ -29,11 +33,6 @@
             if (!this.element) {
                 this.element = $('<img />');
             }
-
-            if (typeof this.src === 'function') {
-                this.src = this.src(this);
-            }
-            this.element.attr('src', this.src);
 
             if (this.scale) {
                 this.element.height((this.scale * 100) + '%');
@@ -43,10 +42,26 @@
 
             this.element.css({
                 position: 'absolute',
-                left: (this.xRange[0] * 100) + '%',
-                top: (this.yRange[0] * 100) + '%',
                 marginLeft: '',
                 marginTop: ''
+            });
+
+            this.setCenter();
+
+            if (typeof this.src === 'function') {
+                this.src = this.src(this);
+            }
+            this.element.attr('src', this.src);
+        },
+
+        setCenter: function () {
+            var xc = 0.5, yc = 0.5, scale = 1, center = {};
+            center.x = xc + this.x * scale;
+            center.y = yc - this.y * scale;
+
+            this.element.css({
+                top: (center.y * this.viewport.height() - this.element.height() / 2),
+                left: (center.x * this.viewport.width() - this.element.width() / 2)
             });
         },
 
@@ -56,42 +71,16 @@
         },
 
         move: function (position) {
-            var css = {}, x, realX, maxRangeX, minRangeX, y, realY, maxRangeY, minRangeY;
+            var css = {}, x, y;
+            position = this._translateScreenToCartesian(position);
 
             if (this.xAxis) {
-                x = position.x * this.xSpeed;
-                realX = this.xRange[0] + x;
-                maxRangeX = Math.max.apply(null, this.xRange);
-                minRangeX = Math.min.apply(null, this.xRange);
-
-                xDiff = (this.element.width() - this.viewport.width()) / this.viewport.width();
-
-                if (xDiff > 0) {
-                    minRangeX = Math.max(minRangeX, -xDiff);
-                    maxRangeX = Math.min(maxRangeX, xDiff);
-                }
-
-                if (realX >= minRangeX && realX <= maxRangeX) {
-                    css.marginLeft = (x * 100) + '%';
-                }
+                x = -(position.x * this.xSpeed);
+                css.marginLeft = this.viewport.width() * x;
             }
             if (this.yAxis) {
                 y = position.y * this.ySpeed;
-                realY = this.yRange[0] + y;
-
-                maxRangeY = Math.max.apply(null, this.yRange);
-                minRangeY = Math.min.apply(null, this.yRange);
-
-                yDiff = (this.element.height() - this.viewport.height()) / this.viewport.height();
-
-                if (yDiff > 0) {
-                    minRangeY = Math.max(minRangeY, -yDiff);
-                    maxRangeY = Math.min(maxRangeY, yDiff);
-                }
-
-                if (realY >= minRangeY && realY <= maxRangeY) {
-                    css.marginTop = (y * 100) + '%';
-                }
+                css.marginTop = this.viewport.height() * y;
             }
             this.element.css(css);
         },
@@ -99,6 +88,17 @@
         destroy: function () {
             this.element.remove();
             this.viewport = null;
+        },
+
+        _translateScreenToCartesian: function (screenPos) {
+            var x, y, xc, yc, scale;
+            scale = 1;
+            xc = yc = 0.5;
+
+            x = (screenPos.x - xc) / scale;
+            y = -((screenPos.y - yc) / scale);
+
+            return {x: x, y: y};
         }
     };
 
@@ -120,7 +120,7 @@
             var _this = this;
             this.layersReady++;
             if (this.layersReady === this.layers.length) {
-                this.element.on('mousemove.parallax', function (ev) {
+                this.element.on('mousemove.perspectiva', function (ev) {
                     var elemOffset = $(this).offset(),
                         offset = {
                             x: ev.pageX - elemOffset.left,
@@ -130,6 +130,12 @@
                 });
                 this.options.ready && this.options.ready();
             }
+        },
+
+        center: function () {
+            var x = this.width() / 2,
+                y = this.height() / 2;
+            return {x: x, y: y};
         },
 
         width: function () {
@@ -147,8 +153,8 @@
             for (i = 0; i < layersCount; i++) {
                 this.options.layers[i].viewport = this;
                 layer = new Layer(this.options.layers[i]);
-                layer.element.bind('ready.parallax', function () {
-                    $(this).unbind('ready.parallax');
+                layer.element.bind('ready.perspectiva', function () {
+                    $(this).unbind('ready.perspectiva');
                     _this._onLayerReady();
                 });
                 this.layers.push(layer);
@@ -181,24 +187,24 @@
             var layersCount = this.layers.length,
                 i;
 
-            this.element.unbind('mousemove.parallax');
+            this.element.unbind('mousemove.perspectiva');
             for (i = 0; i < layersCount; i++) {
                 this.layers[i].destroy();
             }
         }
     }
 
-    $.fn.parallax = function (options, layer, attributes) {
+    $.fn.perspectiva = function (options, layer, attributes) {
         if (options === 'settings') {
-            return this[0].parallax[layer] && this[0].parallax[layer];
+            return this[0].perspectiva[layer] && this[0].perspectiva[layer];
         }
         return $(this).each(function () {
             if (options === 'destroy') {
-                this.parallax.destroy();
+                this.perspectiva.destroy();
             } else if (options === 'update') {
-                this.parallax[layer] && this.parallax[layer].update(attributes);
+                this.perspectiva[layer] && this.perspectiva[layer].update(attributes);
             } else {
-                this.parallax = new Viewport($(this), options);
+                this.perspectiva = new Viewport($(this), options);
             }
         });
     };

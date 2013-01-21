@@ -1,0 +1,29 @@
+{
+    "name": "perspectiva",
+    "title": "jQuery Perspectiva",
+    "description": "Create easy parallax (3D) effects with jQuery.",
+    "version": "2.0.0",
+    "keywords": [
+        "jQuery",
+        "parallax",
+        "effects",
+        "layers"
+    ],
+    "author": {
+        "name": "Edgar J. Suarez",
+        "url": "http://edgarjs.com",
+        "email": "edgar.js@gmail.com"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/mit-license.php"
+        }
+    ],
+    "bugs": "https://github.com/edgarjs/jquery-perspectiva/issues",
+    "homepage": "https://github.com/edgarjs/jquery-perspectiva",
+    "download": "https://github.com/edgarjs/jquery-perspectiva/archive/master.zip",
+    "dependencies": {
+        "jquery": ">=1.7"
+    }
+}
